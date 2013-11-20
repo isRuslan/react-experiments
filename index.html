@@ -4,6 +4,7 @@
     <script src="http://fb.me/react-0.5.1.js"></script>
     <script src="http://fb.me/JSXTransformer-0.5.1.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
+    <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
   </head>
   <body>
     <div id="content"></div>
@@ -11,18 +12,35 @@
       /**
        * @jsx React.DOM
        */
-      var data = [
-        {author: "Pete Hunt", text: "This is one comment"},
-        {author: "Jordan Walke", text: "This is *another* comment"}
-      ];
       var converter = new Showdown.converter();
       
       var CommentBox = React.createClass({
+        loadFromServer: function() {
+          $.ajax({
+            url: this.props.url,
+            success: function(data) {;
+              this.setState({data: data});
+            }.bind(this)
+          });
+        },
+        getInitialState: function() {
+          $.ajax({
+            url: this.props.url,
+            success: function(data) {;
+              this.setState({data: data});
+            }.bind(this)
+          });
+          return {data: []};
+        },
+        componentsWillMount: function() {
+          this.loadFromServer();
+          setInterval(this.loadFromServer, this.props.pollInterval);
+        },
         render: function() {
           return (
             <div className="commentBox">
               <h1>Comments</h1>
-              <CommentsList data={this.props.data} />
+              <CommentsList data={this.state.data} />
               <CommentForm />
             </div>
           );
@@ -67,7 +85,7 @@
       });
 
       React.renderComponent(
-        <CommentBox data={data} />,
+        <CommentBox url="comments.json" pollInterval={2000} />,
         document.getElementById('content')
       );
     </script>
