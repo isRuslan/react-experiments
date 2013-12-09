@@ -1,94 +1,16 @@
 <html>
   <head>
     <title>Hello React</title>
+  </head>
+  <body>
+    <div id="content"></div>
+
+    <!-- scripts -->
     <script src="http://fb.me/react-0.5.1.js"></script>
     <script src="http://fb.me/JSXTransformer-0.5.1.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
     <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
-  </head>
-  <body>
-    <div id="content"></div>
-    <script type="text/jsx">
-      /**
-       * @jsx React.DOM
-       */
-      var converter = new Showdown.converter();
-      
-      var CommentBox = React.createClass({
-        loadFromServer: function() {
-          $.ajax({
-            url: this.props.url,
-            success: function(data) {;
-              this.setState({data: data});
-            }.bind(this)
-          });
-        },
-        getInitialState: function() {
-          $.ajax({
-            url: this.props.url,
-            success: function(data) {;
-              this.setState({data: data});
-            }.bind(this)
-          });
-          return {data: []};
-        },
-        componentsWillMount: function() {
-          this.loadFromServer();
-          setInterval(this.loadFromServer, this.props.pollInterval);
-        },
-        render: function() {
-          return (
-            <div className="commentBox">
-              <h1>Comments</h1>
-              <CommentsList data={this.state.data} />
-              <CommentForm />
-            </div>
-          );
-        }
-      });
-
-      var CommentsList = React.createClass({
-        render: function() {
-          var commentNodes = this.props.data.map(function(comment) {
-            return <Comment author={comment.author}>{comment.text}</Comment>
-          });
-          return (
-            <div className="commentsList">
-              {commentNodes}
-            </div>
-          );
-        }
-      });
-
-      var CommentForm = React.createClass({
-        render: function() {
-          return (
-            <div className="commentForm">
-              Hello I am a CommentForm
-            </div>
-          );
-        }
-      });
-
-      var Comment = React.createClass({
-        render: function() {
-          var rawMarkup = converter.makeHtml(this.props.children.toString());
-          return (
-            <div className="comment">
-              <h2 className="commentAuthor">
-                {this.props.author}
-              </h2>
-              <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-            </div>
-          );
-        }
-      });
-
-      React.renderComponent(
-        <CommentBox url="comments.json" pollInterval={2000} />,
-        document.getElementById('content')
-      );
-    </script>
+    <script src="build/script.js"></script>
   </body>
 </html>
 
